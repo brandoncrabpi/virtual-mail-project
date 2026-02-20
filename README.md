@@ -1,18 +1,59 @@
 # Virtual Mail Project 🏢📬
 
-## Overview
-Step-by-step JavaScript projects to build a **Virtual Post Office** app. Letters travel between SA mail hubs with tracking, delays, and shortest paths.
+## 🚀 Beginner Setup (5 Minutes - No Experience Needed!)
 
-**Structure:** Each folder is a self-contained task. Open `test.html` (if present), edit `script.js`, test in browser console (F12).
+### 1. Install Git
+**🖥️ Mac:**
+- Press **Cmd+Space** → type "Terminal" → Enter
+- Copy/paste:  
+  ```
+  /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"
+  ```
+- Enter password → Wait → Then:  
+  ```
+  brew install git
+  ```
+- Test: `git --version`
 
-## Current Projects
+**💻 Windows:**
+- Download: [Git for Windows](https://git-scm.com/download/win) (big green button)
+- Run installer → **Next** all the way (use defaults)
+- Search "Git Bash" in Start menu → Open
+- Test: `git --version`
+
+**Alternative:** Download from [git-scm.com](https://git-scm.com/downloads)
+
+### 2. Clone This Repo (Download Project)
+Open **Terminal** (Mac) or **Git Bash** (Windows):  
+```
+git clone https://github.com/brandoncrabpi/virtual-mail-project.git
+cd virtual-mail-project
+```
+
+### 3. Update for New Tasks
+```
+git pull origin main
+ls  # See project folders
+```
+
+### 4. Edit & Test
+- **Recommended:** [VS Code](https://code.visualstudio.com/) (free) → File → Open Folder → Select `virtual-mail-project`
+- Open `test.html` in browser (double-click)
+- **F12** → Console → Test code
+- Save → Refresh browser
+
+## 📁 Current Projects
 - **project1-closest-hub/**: Find closest post office from lat/long (JS objects + functions + distance calc).
 
-## How to Work
-1. Clone: `git clone https://github.com/brandoncrabpi/virtual-mail-project`
-2. `cd project1-closest-hub`
-3. Open `test.html` → F12 Console → Test function.
-4. Edit `script.js` → Refresh → Test.
-5. Commit/push when done.
+## 🔄 How to Work on a Project
+1. `cd project1-closest-hub`
+2. Open `test.html` → **F12 Console** → Test function.
+3. Edit `script.js` → Save → Refresh → Test.
+4. Done?  
+   ```
+   git add .
+   git commit -m \"feat: closestPostOffice works!\"
+   git push origin main
+   ```
 
-Next tasks added as you complete! 🚀🦀
+Next projects unlocked as you complete! 🚀🦀
