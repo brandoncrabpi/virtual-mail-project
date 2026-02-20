@@ -8,26 +8,49 @@
     .pass { background: #d4edda; color: #155724; }
     .fail { background: #f8d7da; color: #721c24; }
     button { margin: 10px 0; }
+    .object-details { font-family: monospace; font-size: 14px; background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 5px; max-height: 200px; overflow: auto; }
   </style>
 </head>
 <body>
   <h1>🧪 Test Closest Post Office Function</h1>
-  <p>Edit <code>script.js</code>, save, refresh. Click "Run Tests" → See pass/fail!</p>
+  <p><strong>Function returns full post office OBJECT</strong>. Edit <code>script.js</code>, save, refresh. Tests verify correct object!</p>
   
   <button onclick="runTests()">🚀 Run Tests</button>
   <div id="results"></div>
   
-  <h3>Test Cases:</h3>
+  <h3>Test Cases (Exact Coords → Expected Full Object):</h3>
   <ul>
-    <li><strong>Test 1:</strong> Cape Town (-33.9249, 18.4241) → <code>"Cape Town Central"</code></li>
-    <li><strong>Test 2:</strong> Johannesburg (-26.2041, 28.0473) → <code>"Johannesburg Central"</code></li>
-    <li><strong>Test 3:</strong> Durban (-29.8587, 31.0218) → <code>"Durban Central"</code></li>
+    <li><strong>Test 1:</strong> Cape Town (-33.9249, 18.4241) → Full "Cape Town Central" object</li>
+    <li><strong>Test 2:</strong> Johannesburg (-26.2041, 28.0473) → Full "Johannesburg Central" object</li>
+    <li><strong>Test 3:</strong> Durban (-29.8587, 31.0218) → Full "Durban Central" object</li>
   </ul>
   
   <script src="mailhubs_south_africa.js"></script>
   <script src="script.js"></script>
   <script>
     console.log('postOffices loaded:', postOffices.length);
+
+    // Expected full objects (extracted from data)
+    const expectedObjects = {
+      capeTown: postOffices.find(h => h.location === 'Cape Town Central'),
+      johannesburg: postOffices.find(h => h.location === 'Johannesburg Central'),
+      durban: postOffices.find(h => h.location === 'Durban Central')
+    };
+
+    function objectsMatch(obj1, obj2) {
+      return obj1 && obj2 && 
+        obj1.location === obj2.location &&
+        obj1.longitude === obj2.longitude &&
+        obj1.latitude === obj2.latitude;
+    }
+
+    function formatObject(obj) {
+      if (!obj) return 'null';
+      return `<strong>${obj.location}</strong><br>
+        Hours: ${obj.operatingHours}<br>
+        Processing: ${obj.processingTimeHrs}hrs<br>
+        Coords: ${obj.latitude.toFixed(4)}, ${obj.longitude.toFixed(4)}`;
+    }
 
     function runTests() {
       const resultsDiv = document.getElementById('results');
@@ -38,19 +61,19 @@
           name: 'Test 1: Cape Town',
           lat: -33.9249,
           lng: 18.4241,
-          expected: 'Cape Town Central'
+          expected: expectedObjects.capeTown
         },
         {
           name: 'Test 2: Johannesburg',
           lat: -26.2041,
           lng: 28.0473,
-          expected: 'Johannesburg Central'
+          expected: expectedObjects.johannesburg
         },
         {
           name: 'Test 3: Durban',
           lat: -29.8587,
           lng: 31.0218,
-          expected: 'Durban Central'
+          expected: expectedObjects.durban
         }
       ];
 
@@ -58,30 +81,34 @@
       tests.forEach(test => {
         try {
           const closest = closestPostOffice(test.lat, test.lng, postOffices);
-          const pass = closest && closest.location === test.expected;
+          const pass = objectsMatch(closest, test.expected);
           allPassed = allPassed && pass;
 
           const resultDiv = document.createElement('div');
           resultDiv.className = `test-result ${pass ? 'pass' : 'fail'}`;
           resultDiv.innerHTML = `<strong>${test.name}:</strong> ${pass ? '✅ PASS' : '❌ FAIL'}<br>
-            Got: ${closest ? closest.location : 'null'}<br>
-            Expected: ${test.expected}`;
+            <strong>Input:</strong> lat=${test.lat}, lng=${test.lng}<br>
+            <strong>Got Object:</strong><div class="object-details">${formatObject(closest)}</div>
+            <strong>Expected Object:</strong><div class="object-details">${formatObject(test.expected)}</div>`;
           resultsDiv.appendChild(resultDiv);
+
+          // Console full objects
+          console.log(`${test.name}:`, { input: {lat: test.lat, lng: test.lng}, got: closest, expected: test.expected });
         } catch (e) {
           const resultDiv = document.createElement('div');
           resultDiv.className = 'test-result fail';
-          resultDiv.textContent = `${test.name}: ❌ ERROR - ${e.message}`;
+          resultDiv.innerHTML = `${test.name}: ❌ ERROR - ${e.message}`;
           resultsDiv.appendChild(resultDiv);
           allPassed = false;
         }
       });
 
       if (allPassed) {
-        resultsDiv.innerHTML += '<div class="test-result pass" style="font-size: 18px;"><strong>🎉 ALL TESTS PASSED! Project complete! Commit & push.</strong></div>';
+        resultsDiv.innerHTML += '<div class="test-result pass" style="font-size: 18px;"><strong>🎉 ALL TESTS PASSED! Full objects match. Commit & push!</strong></div>';
       }
     }
 
-    // Auto-run on load (for convenience)
+    // Auto-run on load
     window.onload = runTests;
   </script>
 </body>
