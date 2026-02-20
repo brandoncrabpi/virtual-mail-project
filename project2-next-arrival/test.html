@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Next Mail Hub Arrival</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .test-result { padding: 10px; margin: 5px 0; border-radius: 5px; }
+    .pass { background: #d4edda; color: #155724; }
+    .fail { background: #f8d7da; color: #721c24; }
+    button { margin: 10px 0; }
+    .details { font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Test Next Mail Hub Arrival Time</h1>
+  <p>Edit <code>script.js</code>, save, refresh. Tests verify **Date within 1 min**!</p>
+  
+  <button onclick="runTests()">🚀 Run Tests</button>
+  <div id="results"></div>
+
+  <script src="mailhubs_south_africa.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // Test hubs (exact matches)
+    const cpt = postOffices.find(h => h.location === 'Cape Town Central');
+    const jnb = postOffices.find(h => h.location === 'Johannesburg Central');
+    const dur = postOffices.find(h => h.location === 'Durban Central');
+
+    function datesWithinMinute(d1, d2) {
+      return Math.abs(d1.getTime() - d2.getTime()) < 60000;
+    }
+
+    function formatDate(d) {
+      return d ? d.toLocaleString('en-ZA', {timeZone: 'Africa/Johannesburg'}) : 'null';
+    }
+
+    function runTests() {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      const baseTime = new Date('2026-02-20T10:00:00.000Z');  // Test date
+
+      const tests = [
+        {
+          name: 'Test 1: CPT → JNB',
+          departureTime: new Date(baseTime.getTime()),
+          departureHub: cpt,
+          destHub: jnb,
+          expectedMs: baseTime.getTime() + (cpt.processingTimeHrs * 3600000) + ((simpleDistance(cpt.latitude, cpt.longitude, jnb.latitude, jnb.longitude) * 111 / 500) * 3600000)
+        },
+        {
+          name: 'Test 2: JNB → DUR',
+          departureTime: new Date(baseTime.getTime()),
+          departureHub: jnb,
+          destHub: dur,
+          expectedMs: baseTime.getTime() + (jnb.processingTimeHrs * 3600000) + ((simpleDistance(jnb.latitude, jnb.longitude, dur.latitude, dur.longitude) * 111 / 500) * 3600000)
+        },
+        {
+          name: 'Test 3: DUR → CPT',
+          departureTime: new Date(baseTime.getTime()),
+          departureHub: dur,
+          destHub: cpt,
+          expectedMs: baseTime.getTime() + (dur.processingTimeHrs * 3600000) + ((simpleDistance(dur.latitude, dur.longitude, cpt.latitude, cpt.longitude) * 111 / 500) * 3600000)
+        }
+      ];
+
+      let allPassed = true;
+      tests.forEach(test => {
+        try {
+          const arrival = nextMailHubArrivalTime(test.departureTime, test.departureHub, test.destHub);
+          const expectedDate = new Date(test.expectedMs);
+          const pass = arrival && datesWithinMinute(arrival, expectedDate);
+          allPassed = allPassed && pass;
+
+          const resultDiv = document.createElement('div');
+          resultDiv.className = `test-result ${pass ? 'pass' : 'fail'}`;
+          resultDiv.innerHTML = `<strong>${test.name}:</strong> ${pass ? '✅ PASS' : '❌ FAIL'}<br>
+            <strong>Input:</strong> Depart ${formatDate(test.departureTime)} from ${test.departureHub.location}<br>
+            <strong>Got:</strong> ${formatDate(arrival)}<br>
+            <strong>Expected:</strong> ${formatDate(expectedDate)}`;
+          resultsDiv.appendChild(resultDiv);
+
+          console.log(`${test.name}:`, {got: arrival, expected: expectedDate});
+        } catch (e) {
+          const resultDiv = document.createElement('div');
+          resultDiv.className = 'test-result fail';
+          resultDiv.innerHTML = `${test.name}: ❌ ERROR - ${e.message}`;
+          resultsDiv.appendChild(resultDiv);
+          allPassed = false;
+        }
+      });
+
+      if (allPassed) {
+        resultsDiv.innerHTML += '<div class="test-result pass" style="font-size: 18px;"><strong>🎉 ALL TESTS PASSED! Commit & push!</strong></div>';
+      }
+    }
+
+    window.onload = runTests;
+  </script>
+</body>
+</html>
