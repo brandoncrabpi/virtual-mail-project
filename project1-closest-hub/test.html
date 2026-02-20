@@ -1,19 +1,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Test Closest Post Office</title>
+  <title>Test Closest Post Office Function</title>
   <link rel="stylesheet" href="../style.css">
+  <style>
+    .test-result { padding: 10px; margin: 5px 0; border-radius: 5px; }
+    .pass { background: #d4edda; color: #155724; }
+    .fail { background: #f8d7da; color: #721c24; }
+    button { margin: 10px 0; }
+  </style>
 </head>
 <body>
   <h1>🧪 Test Closest Post Office Function</h1>
-  <p>Open F12 Console and try:</p>
-  <pre id="output"></pre>
+  <p>Edit <code>script.js</code>, save, refresh. Click "Run Tests" → See pass/fail!</p>
+  
+  <button onclick="runTests()">🚀 Run Tests</button>
+  <div id="results"></div>
+  
+  <h3>Test Cases:</h3>
+  <ul>
+    <li><strong>Test 1:</strong> Cape Town (-33.9249, 18.4241) → <code>"Cape Town Central"</code></li>
+    <li><strong>Test 2:</strong> Johannesburg (-26.2041, 28.0473) → <code>"Johannesburg Central"</code></li>
+    <li><strong>Test 3:</strong> Durban (-29.8587, 31.0218) → <code>"Durban Central"</code></li>
+  </ul>
   
   <script src="mailhubs_south_africa.js"></script>
-  <script src="script.js"></script> <!-- Kid adds this -->
+  <script src="script.js"></script>
   <script>
     console.log('postOffices loaded:', postOffices.length);
-    document.getElementById('output').textContent = `Ready! Test in Console:\nclosestPostOffice(-33.9249, 18.4241, postOffices)\n(Should find Cape Town Central)`;
+
+    function runTests() {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      const tests = [
+        {
+          name: 'Test 1: Cape Town',
+          lat: -33.9249,
+          lng: 18.4241,
+          expected: 'Cape Town Central'
+        },
+        {
+          name: 'Test 2: Johannesburg',
+          lat: -26.2041,
+          lng: 28.0473,
+          expected: 'Johannesburg Central'
+        },
+        {
+          name: 'Test 3: Durban',
+          lat: -29.8587,
+          lng: 31.0218,
+          expected: 'Durban Central'
+        }
+      ];
+
+      let allPassed = true;
+      tests.forEach(test => {
+        try {
+          const closest = closestPostOffice(test.lat, test.lng, postOffices);
+          const pass = closest && closest.location === test.expected;
+          allPassed = allPassed && pass;
+
+          const resultDiv = document.createElement('div');
+          resultDiv.className = `test-result ${pass ? 'pass' : 'fail'}`;
+          resultDiv.innerHTML = `<strong>${test.name}:</strong> ${pass ? '✅ PASS' : '❌ FAIL'}<br>
+            Got: ${closest ? closest.location : 'null'}<br>
+            Expected: ${test.expected}`;
+          resultsDiv.appendChild(resultDiv);
+        } catch (e) {
+          const resultDiv = document.createElement('div');
+          resultDiv.className = 'test-result fail';
+          resultDiv.textContent = `${test.name}: ❌ ERROR - ${e.message}`;
+          resultsDiv.appendChild(resultDiv);
+          allPassed = false;
+        }
+      });
+
+      if (allPassed) {
+        resultsDiv.innerHTML += '<div class="test-result pass" style="font-size: 18px;"><strong>🎉 ALL TESTS PASSED! Project complete! Commit & push.</strong></div>';
+      }
+    }
+
+    // Auto-run on load (for convenience)
+    window.onload = runTests;
   </script>
 </body>
 </html>
