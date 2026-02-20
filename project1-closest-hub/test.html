@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Closest Post Office</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <h1>🧪 Test Closest Post Office Function</h1>
+  <p>Open F12 Console and try:</p>
+  <pre id="output"></pre>
+  
+  <script src="mailhubs_south_africa.js"></script>
+  <script src="script.js"></script> <!-- Kid adds this -->
+  <script>
+    console.log('postOffices loaded:', postOffices.length);
+    document.getElementById('output').textContent = `Ready! Test in Console:\nclosestPostOffice(-33.9249, 18.4241, postOffices)\n(Should find Cape Town Central)`;
+  </script>
+</body>
+</html>
