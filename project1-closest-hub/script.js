@@ -1,4 +1,4 @@
-// TODO: Kid writes this function!
+// TODO: Write your closestPostOffice function here!
 
 function closestPostOffice(myLat, myLong, postOffices) {
   // Your code here:
