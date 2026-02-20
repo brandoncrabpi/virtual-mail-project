@@ -46,21 +46,21 @@
           departureTime: new Date(baseTime.getTime()),
           departureHub: cpt,
           destHub: jnb,
-          expectedMs: baseTime.getTime() + (cpt.processingTimeHrs * 3600000) + ((simpleDistance(cpt.latitude, cpt.longitude, jnb.latitude, jnb.longitude) * 111 / 500) * 3600000)
+          expectedMs: baseTime.getTime() + (cpt.processingTimeHrs * 3600000) + ((simpleDistance(cpt.latitude, cpt.longitude, jnb.latitude, jnb.longitude) * 111 / 80) * 3600000)
         },
         {
           name: 'Test 2: JNB → DUR',
           departureTime: new Date(baseTime.getTime()),
           departureHub: jnb,
           destHub: dur,
-          expectedMs: baseTime.getTime() + (jnb.processingTimeHrs * 3600000) + ((simpleDistance(jnb.latitude, jnb.longitude, dur.latitude, dur.longitude) * 111 / 500) * 3600000)
+          expectedMs: baseTime.getTime() + (jnb.processingTimeHrs * 3600000) + ((simpleDistance(jnb.latitude, jnb.longitude, dur.latitude, dur.longitude) * 111 / 80) * 3600000)
         },
         {
           name: 'Test 3: DUR → CPT',
           departureTime: new Date(baseTime.getTime()),
           departureHub: dur,
           destHub: cpt,
-          expectedMs: baseTime.getTime() + (dur.processingTimeHrs * 3600000) + ((simpleDistance(dur.latitude, dur.longitude, cpt.latitude, cpt.longitude) * 111 / 500) * 3600000)
+          expectedMs: baseTime.getTime() + (dur.processingTimeHrs * 3600000) + ((simpleDistance(dur.latitude, dur.longitude, cpt.latitude, cpt.longitude) * 111 / 80) * 3600000)
         }
       ];
 

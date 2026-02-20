@@ -17,7 +17,7 @@ Write `nextMailHubArrivalTime(departureTime, departureMailHub, destinationMailHu
    1. Add processing: currentTime = departureTime + (departureMailHub.processingTimeHrs * 60 * 60 * 1000)  // ms
    2. Calc distance: use simpleDistance(departure.lat, departure.lng, dest.lat, dest.lng)
    3. Distance → km: km = distanceDegrees * 111  // 1° ≈ 111km
-   4. Travel hours: travelHrs = km / 500  // Speed: 500 km/h (truck/plane avg)
+   4. Travel hours: travelHrs = km / 500  // Speed: 80 km/h (mail truck average)
    5. Arrival = currentTime + (travelHrs * 60 * 60 * 1000)
    6. Return new Date(arrivalMs)
    ```
@@ -34,7 +34,7 @@ Write `nextMailHubArrivalTime(departureTime, departureMailHub, destinationMailHu
 ```
 Input: CPT → JNB, depart 10:00
 Process 12h → 22:00
-Dist ~1200km → 2.4h travel → Arrive ~00:24 next day
+Dist ~1200km → 15h travel → Arrive ~13:00 next day
 ```
 
 **Done?** `git add . && git commit -m "feat: nextMailHubArrivalTime" && git push`  
