@@ -14,7 +14,7 @@ Create a class to handle geographic coordinates:
 
 **Methods to implement:**
 - `toString()` - Returns string format "longitude, latitude"
-- `distanceToInKm(other)` - Calculate distance to another coordinate using Haversine formula or a simple approximation (return km)
+- `distanceToInKm(other)` - Calculate distance to another coordinate using Haversine formula (return km)
 
 ### 2. MailHub Class
 
@@ -40,11 +40,19 @@ Create a class that represents a route between two mail hubs:
 - `getTotalProcessingTime()` - Returns sum of all processing times
 - `getRouteLocations()` - Returns array of location names
 
-### 4. Helper Function
+### 4. Helper Functions
 
-Implement `findHubByLocation(locationName)` that:
+**`findHubByLocation(locationName)`**
 - Searches `mailHubs` array for matching location
 - Returns a new MailHub instance (or null if not found)
+
+**`findClosestHub(latitude, longitude)`**
+- Finds the mailhub closest to the given latitude and longitude
+- Returns a MailHub instance (or null if mailHubs is empty)
+
+**`findClosestHubToCoordinate(coord)`**
+- Finds the mailhub closest to the given Coordinate instance
+- Returns a MailHub instance (or null if mailHubs is empty)
 
 ### 5. Sample Route
 

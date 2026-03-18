@@ -143,69 +143,134 @@ const mailHubs = [
 
 class Coordinate {
   constructor(longitude, latitude) {
-    // TODO: Initialize this.longitude and this.latitude
+    this.longitude = longitude;
+    this.latitude = latitude;
   }
 
   toString() {
-    // TODO: Return "longitude, latitude" format
+    return `${this.longitude}, ${this.latitude}`;
   }
 
   distanceToInKm(other) {
-    // TODO: Calculate distance using Haversine formula (return km)
+    const R = 6371;
+    const dLat = this.toRad(other.latitude - this.latitude);
+    const dLon = this.toRad(other.longitude - this.longitude);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(this.toRad(this.latitude)) * Math.cos(this.toRad(other.latitude)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   }
 
   toRad(deg) {
-    // TODO: Convert degrees to radians
+    return deg * (Math.PI / 180);
   }
 }
 
 class MailHub {
   constructor({ location, operatingHours, processingTimeHrs, longitude, latitude }) {
-    // TODO: Initialize properties (use Coordinate for location)
+    this.location = location;
+    this.operatingHours = operatingHours;
+    this.processingTimeHrs = processingTimeHrs;
+    this.coordinate = new Coordinate(longitude, latitude);
   }
 
   getCoordinates() {
-    // TODO: Return Coordinate instance
+    return this.coordinate;
   }
 
   isOpenAt(hour) {
-    // TODO: Parse operatingHours and check if hub is open at given hour
+    const hours = this.operatingHours.match(/(\d+):(\d+)(am|pm)/g);
+    if (!hours || hours.length !== 2) return false;
+
+    const parseTime = (timeStr) => {
+      const match = timeStr.match(/(\d+):(\d+)(am|pm)/);
+      let h = parseInt(match[1]);
+      const mins = parseInt(match[2]);
+      const period = match[3];
+      if (period === 'pm' && h < 12) h += 12;
+      if (period === 'am' && h === 12) h = 0;
+      return h * 60 + mins;
+    };
+
+    const openTime = parseTime(hours[0]);
+    const closeTime = parseTime(hours[1]);
+    const currentTime = hour * 60;
+
+    return currentTime >= openTime && currentTime <= closeTime;
   }
 }
 
 class MailRoute {
   constructor(fromHub, toHub, route = []) {
-    // TODO: Initialize fromHub, toHub, route
+    this.fromHub = fromHub;
+    this.toHub = toHub;
+    this.route = route;
   }
 
   getTotalHops() {
-    // TODO: Return number of hubs in route
+    return this.route.length;
   }
 
   getTotalProcessingTime() {
-    // TODO: Sum all processingTimeHrs from route hubs
+    return this.route.reduce((total, hub) => total + hub.processingTimeHrs, 0);
   }
 
   getRouteLocations() {
-    // TODO: Return array of location names from route
+    return this.route.map(hub => hub.location);
   }
 }
 
 function findHubByLocation(locationName) {
-  // TODO: Find hub in mailHubs array and return MailHub instance
-  // Return null if not found
+  const hubData = mailHubs.find(hub => hub.location === locationName);
+  if (!hubData) return null;
+  return new MailHub(hubData);
 }
 
 function findClosestHub(latitude, longitude) {
-  // TODO: Find the mailhub closest to the given coordinates
-  // Return MailHub instance (or null if mailHubs is empty)
+  if (mailHubs.length === 0) return null;
+  const targetCoord = new Coordinate(longitude, latitude);
+  let closestHub = null;
+  let minDistance = Infinity;
+  for (const hubData of mailHubs) {
+    const hubCoord = new Coordinate(hubData.longitude, hubData.latitude);
+    const dist = targetCoord.distanceToInKm(hubCoord);
+    if (dist < minDistance) {
+      minDistance = dist;
+      closestHub = new MailHub(hubData);
+    }
+  }
+  return closestHub;
 }
 
 function findClosestHubToCoordinate(coord) {
-  // TODO: Find the mailhub closest to the given Coordinate instance
-  // Return MailHub instance (or null if mailHubs is empty)
+  if (mailHubs.length === 0) return null;
+  let closestHub = null;
+  let minDistance = Infinity;
+  for (const hubData of mailHubs) {
+    const hubCoord = new Coordinate(hubData.longitude, hubData.latitude);
+    const dist = coord.distanceToInKm(hubCoord);
+    if (dist < minDistance) {
+      minDistance = dist;
+      closestHub = new MailHub(hubData);
+    }
+  }
+  return closestHub;
 }
 
-// TODO: Create sample route from Cape Town to Umhlanga
+const capeTown = findHubByLocation('Cape Town Central');
+const umhlanga = findHubByLocation('Umhlanga');
+
+const capeTownToUmhlangaRoute = new MailRoute(
+  capeTown,
+  umhlanga,
+  [
+    findHubByLocation('Cape Town Central'),
+    findHubByLocation('Gqeberha Central'),
+    findHubByLocation('East London Central'),
+    findHubByLocation('Durban Central'),
+    findHubByLocation('Umhlanga')
+  ]
+);
 
 module.exports = { Coordinate, MailHub, MailRoute, mailHubs, findHubByLocation, findClosestHub, findClosestHubToCoordinate };
